@@ -1,0 +1,12 @@
+apiVersion: v2
+name: simple-local-path-provisioner
+description: Deterministic host-path CSI driver for K3s/k3d lab environments
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - storage
+  - csi
+  - k3s
+  - k3d
+  - local-path

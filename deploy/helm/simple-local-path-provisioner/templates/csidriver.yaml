@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: {{ .Values.driver.name }}
+  labels:
+    {{- include "slpp.labels" . | nindent 4 }}
+spec:
+  # attachRequired=true causes Kubernetes to create VolumeAttachment objects,
+  # which allows external-attacher to call ControllerPublishVolume/Unpublish
+  # for single-node writable publication tracking.
+  attachRequired: true
+  podInfoOnMount: false
+  volumeLifecycleModes:
+    - Persistent

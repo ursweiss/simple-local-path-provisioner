@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "slpp.fullname" . }}-controller
+  labels:
+    {{- include "slpp.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "slpp.fullname" . }}-controller
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "slpp.controllerServiceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "slpp.fullname" . }}-node
+  labels:
+    {{- include "slpp.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "slpp.fullname" . }}-node
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "slpp.nodeServiceAccountName" . }}
+    namespace: {{ .Release.Namespace }}

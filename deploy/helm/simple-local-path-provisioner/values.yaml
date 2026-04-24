@@ -1,0 +1,54 @@
+# Container image for the CSI driver
+image:
+  repository: ghcr.io/ursweiss/simple-local-path-provisioner
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+# CSI driver name — must match the provisioner field in the StorageClass
+driver:
+  name: simple-local-path.csi.whity.ch
+
+# Base path on the host where backing directories are created.
+# All K3d/K3s nodes must have this directory mounted at the same path.
+basePath: /srv/k3d-persistent-volumes
+
+# Duration after which a stale publication lock may be reclaimed.
+# Set to 0 to disable stale timeout recovery (admin must manually clear).
+staleTimeout: 1m
+
+# Allow force takeover of any publication lock ignoring stale timeout.
+# Keep false in normal operation.
+allowForceTakeover: false
+
+# StorageClass configuration
+storageClass:
+  name: simple-local-path
+  # Set true to make this the default StorageClass in the cluster
+  isDefault: false
+  # Retain keeps backing directories when PVCs are deleted (recommended for lab use)
+  reclaimPolicy: Retain
+  # Immediate binding works because all nodes share the same base path
+  bindingMode: Immediate
+
+# Namespace to deploy into (defaults to the Helm release namespace)
+# Override with --namespace when installing.
+
+# CSI sidecar images
+sidecars:
+  provisioner:
+    image: registry.k8s.io/sig-storage/csi-provisioner:v5.2.0
+  attacher:
+    image: registry.k8s.io/sig-storage/csi-attacher:v4.8.1
+  registrar:
+    image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0
+
+# Number of controller replicas (keep 1 for lab use)
+controller:
+  replicas: 1
+  resources: {}
+
+node:
+  resources: {}
+
+# klog verbosity level (0=errors only, 2=info, 4=debug)
+logLevel: 2

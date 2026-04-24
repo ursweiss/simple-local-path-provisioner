@@ -8,9 +8,17 @@ image:
 driver:
   name: simple-local-path.csi.whity.ch
 
-# Base path on the host where backing directories are created.
-# All K3d/K3s nodes must have this directory mounted at the same path.
-basePath: /srv/k3d-persistent-volumes
+# Base path as seen INSIDE the k3d/k3s node containers where backing directories
+# are created. This must be the in-node path of the shared volume, NOT the macOS
+# or host path.
+#
+# k3d example:
+#   k3d cluster create ... \
+#     --volume /Users/you/K3s/volumes/mycluster:/var/lib/rancher/k3s/storage@all
+#   => basePath must be /var/lib/rancher/k3s/storage
+#
+# All nodes must have the same path mounted (use @all in k3d).
+basePath: /var/lib/rancher/k3s/storage
 
 # Duration after which a stale publication lock may be reclaimed.
 # Set to 0 to disable stale timeout recovery (admin must manually clear).

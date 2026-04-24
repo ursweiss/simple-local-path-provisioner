@@ -138,12 +138,27 @@ linked driver binary — no shell, no package manager.
 
 ### 1. Prepare the base directory on the host
 
-All K3d/K3s nodes must have the base path available at the same absolute path. For k3d,
-mount the host directory into every node at container creation:
+> **Important — k3d path mapping:** `basePath` must be the path **inside the k3d node
+> containers**, not the macOS/host path. k3d's `--volume` flag maps a host directory
+> into each node at a specific in-node path. Use that in-node path as `basePath`.
+>
+> Example:
+> ```
+> Host (macOS):   /Users/you/K3s/volumes/mycluster
+> k3d node mount: /var/lib/rancher/k3s/storage
+> Correct basePath: /var/lib/rancher/k3s/storage   ← use this, NOT the macOS path
+> ```
+
+Create the k3d cluster with the volume mounted into all nodes:
 
 ```bash
-k3d cluster create my-cluster \
-  --volume /srv/k3d-persistent-volumes:/srv/k3d-persistent-volumes@all
+K3D_CLUSTER_NAME=mycluster
+K3D_LOCAL_FS=$HOME/K3s/volumes/$K3D_CLUSTER_NAME
+
+k3d cluster create $K3D_CLUSTER_NAME \
+  --servers 1 \
+  --agents 2 \
+  --volume $K3D_LOCAL_FS:/var/lib/rancher/k3s/storage@all
 ```
 
 ### 2. Install with Helm
@@ -152,17 +167,18 @@ k3d cluster create my-cluster \
 helm install simple-local-path \
   deploy/helm/simple-local-path-provisioner \
   --namespace simple-local-path \
-  --create-namespace
+  --create-namespace \
+  --set basePath=/var/lib/rancher/k3s/storage
 ```
 
-To install with custom values:
+To customise further:
 
 ```bash
 helm install simple-local-path \
   deploy/helm/simple-local-path-provisioner \
   --namespace simple-local-path \
   --create-namespace \
-  --set basePath=/srv/k3d-persistent-volumes \
+  --set basePath=/var/lib/rancher/k3s/storage \
   --set storageClass.isDefault=true
 ```
 

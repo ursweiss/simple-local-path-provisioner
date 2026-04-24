@@ -48,8 +48,12 @@ func (s *nodeServer) NodePublishVolume(
 	}
 
 	if _, err := os.Stat(backingPath); os.IsNotExist(err) {
-		return nil, status.Errorf(codes.NotFound,
-			"backing directory %q does not exist for volume %q", backingPath, req.VolumeId)
+		klog.Warningf("NodePublishVolume: vol=%s backing directory %s not found, creating it",
+			req.VolumeId, backingPath)
+		if err := os.MkdirAll(backingPath, 0755); err != nil {
+			return nil, status.Errorf(codes.Internal,
+				"create backing directory %q: %v", backingPath, err)
+		}
 	}
 
 	target := filepath.Clean(req.TargetPath)

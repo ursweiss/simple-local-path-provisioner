@@ -43,7 +43,6 @@ spec:
               mountPath: /csi
             - name: backing-store
               mountPath: {{ .Values.basePath }}
-              mountPropagation: Bidirectional
           {{- with .Values.controller.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

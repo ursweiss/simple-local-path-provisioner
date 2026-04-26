@@ -1,7 +1,7 @@
 IMAGE_REPO ?= ghcr.io/ursweiss/simple-local-path-provisioner
 IMAGE_TAG  ?= latest
 
-.PHONY: build docker-build helm-lint tidy
+.PHONY: build docker-build helm-lint tidy test lint vuln pre-commit check
 
 build:
 	go build -o bin/driver ./cmd/driver
@@ -14,3 +14,17 @@ docker-build:
 
 helm-lint:
 	helm lint deploy/helm/simple-local-path-provisioner
+
+test:
+	go test ./...
+
+lint:
+	golangci-lint run ./...
+
+vuln:
+	govulncheck ./...
+
+pre-commit:
+	pre-commit run --all-files
+
+check: lint test vuln helm-lint pre-commit

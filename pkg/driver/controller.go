@@ -47,7 +47,7 @@ func (s *controllerServer) CreateVolume(
 
 	klog.V(2).Infof("CreateVolume: identity=%s backingPath=%s", handle, backingPath)
 
-	if err := os.MkdirAll(backingPath, 0755); err != nil {
+	if err := os.MkdirAll(backingPath, 0750); err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"create backing directory %q: %v", backingPath, err)
 	}
@@ -129,7 +129,7 @@ func (s *controllerServer) ControllerPublishVolume(
 		// write is not yet visible here. Create it idempotently.
 		klog.Warningf("ControllerPublishVolume: vol=%s backing directory %s not found, creating it",
 			req.VolumeId, backingPath)
-		if err := os.MkdirAll(backingPath, 0755); err != nil {
+		if err := os.MkdirAll(backingPath, 0750); err != nil {
 			return nil, status.Errorf(codes.Internal,
 				"create backing directory %q: %v", backingPath, err)
 		}
@@ -317,4 +317,3 @@ func validateCapabilities(caps []*csi.VolumeCapability) error {
 	}
 	return nil
 }
-

@@ -50,7 +50,7 @@ func (s *nodeServer) NodePublishVolume(
 	if _, err := os.Stat(backingPath); os.IsNotExist(err) {
 		klog.Warningf("NodePublishVolume: vol=%s backing directory %s not found, creating it",
 			req.VolumeId, backingPath)
-		if err := os.MkdirAll(backingPath, 0755); err != nil {
+		if err := os.MkdirAll(backingPath, 0750); err != nil {
 			return nil, status.Errorf(codes.Internal,
 				"create backing directory %q: %v", backingPath, err)
 		}
@@ -69,7 +69,7 @@ func (s *nodeServer) NodePublishVolume(
 		return &csi.NodePublishVolumeResponse{}, nil
 	}
 
-	if err := os.MkdirAll(target, 0755); err != nil {
+	if err := os.MkdirAll(target, 0750); err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"create target path %q: %v", target, err)
 	}
@@ -156,7 +156,7 @@ func isMountPoint(path string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("open /proc/self/mounts: %w", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

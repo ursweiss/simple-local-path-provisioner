@@ -70,7 +70,7 @@ func (ms *MetaStore) Read(handle, backingPath string) (*VolumeMetadata, error) {
 }
 
 func readMetaFile(backingPath string) (*VolumeMetadata, error) {
-	data, err := os.ReadFile(filepath.Join(backingPath, metaFileName))
+	data, err := os.ReadFile(filepath.Join(backingPath, metaFileName)) //nolint:gosec // path is validated by validateUnderBase; filename is a constant
 	if err != nil {
 		return nil, err
 	}

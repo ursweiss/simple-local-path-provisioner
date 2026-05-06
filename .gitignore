@@ -1,0 +1,18 @@
+# Go
+*.o
+*.a
+*.so
+.DS_Store
+_obj
+_test
+*.6
+*.out
+*.exe
+*.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
